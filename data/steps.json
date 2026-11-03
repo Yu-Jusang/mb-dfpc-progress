@@ -1,0 +1,116 @@
+[
+ {
+  "id": "audit",
+  "title": "기존 논문·코드·설계 기록·원자료 점검",
+  "detail": "DF-PC 공식 구현의 numerical cache와 logical history 동작, Fisher-Z·KCI 계산 경로(causal-learn 0.1.3.8), 이전 subset·K 크기 연구의 수행 여부를 확인했습니다.",
+  "status": "done"
+ },
+ {
+  "id": "design",
+  "title": "추가 실험 설계와 평가 기준 사전 기록",
+  "detail": "결과를 보기 전에 design_revision.md에 캐시 정책 비교, 무작위 schedule, threshold 후보와 선택 규칙, microbenchmark 격자, 비용 모델 선택 규칙, 순차 시간 측정 설계를 적었습니다.",
+  "status": "auto",
+  "auto_done": "design_revision.md"
+ },
+ {
+  "id": "code",
+  "title": "실험 코드 작성",
+  "detail": "추천 결과를 logical history에 즉시 기록하는 정책, 11개 blanket threshold, 역행렬 형태의 빠른 ridge, cache hit·backend 시간을 세는 tester, 전제를 기록하는 deductor, 무작위 schedule 실행기, 경로 추적·시간 측정·비용 모델 스크립트.",
+  "status": "auto",
+  "auto_done": "costmodel.py"
+ },
+ {
+  "id": "bench",
+  "title": "검정 비용 microbenchmark (단독 실행)",
+  "detail": "Fisher-Z: n·p·조건집합 크기 k별로 query당 시간을 batch로 측정(244개 셀). KCI: n=100–600, k=0–8, 두 자료 유형, 단계별 시간(커널·pinv·고윳값 분해·고유벡터 곱)과 메모리. 다른 계산이 없는 상태에서 잽니다.",
+  "status": "auto",
+  "auto_start": "results_rev/bench/log_fisherz.txt",
+  "auto_done": "results_rev/bench/kci_env.json"
+ },
+ {
+  "id": "validate",
+  "title": "사전 검증",
+  "detail": "새 코드가 기존 실험 결과를 그대로 재현하는지, p-value memo가 결과를 바꾸지 않는지, history 정책에서도 추천 단계가 동일한지, oracle CI에서 모든 방법이 참 skeleton을 복원하는지 확인합니다.",
+  "status": "auto",
+  "auto_done": "results_rev/validation_rev.json"
+ },
+ {
+  "id": "dev",
+  "title": "Blanket threshold 개발 데이터 선택",
+  "detail": "개발용 시드 120개 데이터셋에서 11개 threshold를 비교하고, 미리 정한 규칙으로 평가할 대안 3개를 고정합니다.",
+  "status": "auto",
+  "auto_start": "results_rev/dev_thr/manifest.json",
+  "auto_done": "frozen_rev.json"
+ },
+ {
+  "id": "study2",
+  "title": "무작위 schedule 실험 (Study 2)",
+  "detail": "같은 데이터셋마다 무작위 변수 순서 20–30개에서 DF-PC, Top3/Top10, MB-DFPC, 각 방법의 즉시 history 정책, Moral-DFPC, threshold 대안을 실행합니다. 순서 민감도·캐시 정책·threshold 효과를 따로 봅니다.",
+  "status": "auto",
+  "auto_start": "results_rev/rs_main/manifest.json",
+  "auto_done_all": [
+   "results_rev/rs_main/manifest.json",
+   "results_rev/rs_stress/manifest.json",
+   "results_rev/rs_large/manifest.json",
+   "results_rev/rs_kci/manifest.json"
+  ]
+ },
+ {
+  "id": "fastcheck",
+  "title": "빠른 ridge 구현의 결과 동일성 검증",
+  "detail": "기존 Top3/Top10의 모든 실행을 역행렬 형태 ridge로 다시 돌려 간선·검정 수·추천 집합이 같은지 확인합니다.",
+  "status": "auto",
+  "auto_start": "results_rev/fastcheck_main/manifest.json",
+  "auto_done_all": [
+   "results_rev/fastcheck_main/manifest.json",
+   "results_rev/fastcheck_stress/manifest.json",
+   "results_rev/fastcheck_large/manifest.json",
+   "results_rev/fastcheck_kci/manifest.json"
+  ]
+ },
+ {
+  "id": "trace",
+  "title": "결과가 달라진 사례의 추론 경로 추적",
+  "detail": "history 정책에서 skeleton이 달라진 실행마다 처음 갈라진 판정을 찾고, 전제 → 연역 규칙 → 간선 판정의 경로를 기록합니다.",
+  "status": "auto",
+  "auto_done": "results_rev/trace/trace_counts.json"
+ },
+ {
+  "id": "timing",
+  "title": "순차 실행시간 측정 (단독)",
+  "detail": "fit·검정·탐색 오버헤드를 나눠 기록하고, 기존 ridge와 빠른 ridge를 같은 조건에서 비교합니다.",
+  "status": "auto",
+  "auto_start": "results_rev/timing/timing_main.csv",
+  "auto_done": "results_rev/timing/timing_kci.csv"
+ },
+ {
+  "id": "cost",
+  "title": "비용 모델 적합·검증과 절감률 재평가",
+  "detail": "후보 비용 함수를 fitting/validation으로 나눠 고르고, 알고리즘 실행으로 예측을 검증한 뒤 검정 수·|S|+1·새 비용·실제 시간 네 기준으로 절감률을 다시 계산합니다.",
+  "status": "auto",
+  "auto_done": "results_rev/costmodel/costmodel_summary.json"
+ },
+ {
+  "id": "lit",
+  "title": "선행연구·참고문헌 원문 대조",
+  "detail": "Total Conditioning, PenPC, P3PC, Guess2Graph 등과 원문 수준으로 비교하고 서지 정보와 인용 문장을 검증합니다.",
+  "status": "auto",
+  "auto_start": "results_rev/bench/log_fisherz.txt",
+  "auto_done": "revision/literature_audit.md"
+ },
+ {
+  "id": "paper",
+  "title": "독립적인 영어 논문으로 재작성",
+  "detail": "문제 → 방법 → 이론 → 실험 → 결과 → 한계 순서로 다시 쓰고, 전체 pseudocode와 증명을 부록에 보강합니다.",
+  "status": "auto",
+  "auto_start": "paper_rev/paper.tex",
+  "auto_done": "paper_rev/paper.pdf"
+ },
+ {
+  "id": "final",
+  "title": "검증 기록·변경 요약·한국어 요약",
+  "detail": "표·그림·주장을 원자료와 연결한 검증 기록과 변경 요약을 만들고 결과를 전달합니다.",
+  "status": "auto",
+  "auto_done": "revision/DONE"
+ }
+]
